@@ -29,7 +29,7 @@ const char *get_os_type(void) {
 	mib[1] = KERN_OSTYPE;
 	s = malloc(LEN);
 	len = sizeof(buf);
-	
+
 	if (sysctl(mib, 2, &buf, &len, NULL, 0) == -1)
 		strncpy(s, "Darwin", len);
 	strncpy(s, buf, len);
@@ -72,7 +72,7 @@ unsigned int get_cpu_num(void) {
 unsigned long get_cpu_speed(void) {
 	unsigned long speed;
 	size_t len;
-	
+
 	len = sizeof(speed);
 	sysctlbyname("hw.cpufrequency", &speed, &len, NULL, 0);
 	speed /= 1000000;
@@ -83,12 +83,12 @@ unsigned long get_cpu_speed(void) {
 LoadAvg get_loadavg(void) {
 	double loads[3];
 	LoadAvg la;
-	
+
 	getloadavg(loads, 3);
 	la.one = loads[0];
 	la.five = loads[1];
 	la.fifteen = loads[2];
-	
+
 	return la;
 }
 
@@ -101,7 +101,7 @@ unsigned long get_proc_total(void) {
 	mib[2] = KERN_PROC_ALL;
 
 	sysctl(mib, 3, NULL, &len, NULL, 0);
-	
+
 	return len / sizeof(struct kinfo_proc);
 }
 
@@ -120,7 +120,7 @@ MemInfo get_mem_info(void) {
 		sysctl(mib, 2, &size, &len, NULL, 0);
 		size /= 1024;
 	}
-	
+
 	host_statistics(mach_host_self(), HOST_VM_INFO,
 				(host_info_t)&vm_stat, &count);
 
@@ -281,10 +281,7 @@ char *makenetvfslist(void){
 		*strptr = ',';
 		free(listptr[i]);
 	}
-	*(--strptr) = NULL;
+	*(--strptr) = 0x00;
 	free(listptr);
 	return (str);
 }
-
-
-	
