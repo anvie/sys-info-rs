@@ -8,6 +8,11 @@
 
 #define LEN 20
 #define MAXPROCESSES 1024
+
+#ifdef WIN32
+#define snprintf _snprintf
+#endif
+
 static const char *os_type = "Windows";
 
 /* Internal Declarations */
