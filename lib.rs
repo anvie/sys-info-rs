@@ -9,8 +9,8 @@ extern crate libc;
 
 use std::ffi;
 use std::fmt;
-use std::io::{self, Read};
 use std::fs::File;
+use std::io::{self, Read};
 use std::os::raw::c_char;
 
 #[cfg(target_os = "macos")]
@@ -124,7 +124,6 @@ extern "C" {
     fn get_disk_info() -> DiskInfo;
 }
 
-
 /// Get operation system type.
 ///
 /// Such as "Linux", "Darwin", "Windows".
@@ -199,7 +198,9 @@ pub fn loadavg() -> Result<LoadAvg, Error> {
     if cfg!(target_os = "linux") {
         let mut s = String::new();
         File::open("/proc/loadavg")?.read_to_string(&mut s)?;
-        let loads = s.trim().split(' ')
+        let loads = s
+            .trim()
+            .split(' ')
             .take(3)
             .map(|val| val.parse::<f64>().unwrap())
             .collect::<Vec<f64>>();
@@ -233,7 +234,6 @@ pub fn proc_total() -> Result<u64, Error> {
         Err(Error::UnsupportedSystem)
     }
 }
-
 
 /// Get memory information.
 ///
@@ -303,14 +303,16 @@ pub fn hostname() -> Result<String, Error> {
 pub fn boottime() -> Result<timeval, Error> {
     let mut bt = timeval {
         tv_sec: 0,
-        tv_usec: 0
+        tv_usec: 0,
     };
 
     #[cfg(target_os = "linux")]
     {
         let mut s = String::new();
         File::open("/proc/uptime")?.read_to_string(&mut s)?;
-        let secs = s.trim().split(' ')
+        let secs = s
+            .trim()
+            .split(' ')
             .take(2)
             .map(|val| val.parse::<f64>().unwrap())
             .collect::<Vec<f64>>();
@@ -322,9 +324,14 @@ pub fn boottime() -> Result<timeval, Error> {
         let mut mib = [MAC_CTL_KERN, MAC_KERN_BOOTTIME];
         let mut size: libc::size_t = size_of_val(&bt) as libc::size_t;
         unsafe {
-            sysctl(&mut mib[0], 2,
-                   &mut bt as *mut timeval as *mut libc::c_void,
-                   &mut size, null_mut(), 0);
+            sysctl(
+                &mut mib[0],
+                2,
+                &mut bt as *mut timeval as *mut libc::c_void,
+                &mut size,
+                null_mut(),
+                0,
+            );
         }
     }
 
